@@ -9,4 +9,5 @@ setup(
         [console_scripts]
         pao=pao:main
         ''',
+    data_files=[('data', ['pao.txt'])],
 )

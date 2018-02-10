@@ -6,12 +6,13 @@ import sys
 import random
 import termios
 import tty
+import pkgutil
 
 
 def validate_start_end(pao_num, start, end):
     if start > pao_num:
         raise click.BadParameter('--start paramatar is too large.')
-    if end > pao_num:
+    if end >= pao_num:
         raise click.BadParameter('--end paramatar is too large.')
     if end < start:
         raise click.BadParameter('--start is less than or equal to --end')
@@ -53,19 +54,23 @@ def quiz(paos, pnum):
 def _quiz(p, pnum):
     print(p.split()[pnum])
     _input()
-    print(p)
+    print(p.strip())
     _input()
 
 
 @click.command()
-@click.option('--fname', '-f', default='pao.txt')
+@click.option('--fname', '-f')
 @click.option('--start', '-s', default=00)
 @click.option('--end', '-e', default=99)
 @click.option('--presen', '-p', default='n')
 def cmd(fname, start, end, presen):
     paos = list()
-    with open(fname) as f:
-        paos = f.readlines()
+    if fname is None:
+        #paos = pkgutil.get_data('pao', 'data/pao.txt').split('\n')
+        paos = pkgutil.get_data('pao', 'data/pao.txt').decode('utf8').strip().split('\n')
+    else:
+        with open(fname) as f:
+            paos = f.readlines()
     validate_start_end(len(paos), start, end)
     validate_presen(presen)
 
